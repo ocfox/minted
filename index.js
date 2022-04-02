@@ -6,25 +6,30 @@ canvas.height = 576
 
 context.fillRect(0, 0, canvas.width, canvas.height)
 
+const gravity = 0.6
+
 class Sprite {
   constructor({ position, velocity }) {
     this.position = position
     this.velocity = velocity
+    this.height = 150
+    this.width = 50
   }
 
   draw() {
     context.fillStyle = 'red'
-    context.fillRect(this.position.x, this.position.y, 50, 150)
+    context.fillRect(this.position.x, this.position.y, this.width, this.height)
   }
 
   update() {
-    if (this.position.y + 150 + this.velocity.y >= canvas.height) {
+    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
       this.velocity.y = 0
-      this.position.y = canvas.height - 150
+    } else {
+      this.velocity.y += gravity
     }
-    this.draw()
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
+    this.draw()
   }
 }
 
@@ -35,7 +40,7 @@ const player = new Sprite({
   },
   velocity: {
     x: 0,
-    y: 10
+    y: 0
   }
 })
 
