@@ -65,7 +65,28 @@ function animate() {
   enemy.update()
 }
 
-animate()
+window.addEventListener('keydown', (event) => {
+  switch (event.key) {
+    case 'd':
+      player.velocity.x = 1
+      break
+    case 'a':
+      player.velocity.x = -1
+      break
+  }
 
-player.draw()
-enemy.draw()
+})
+
+window.addEventListener('keyup', (event) => {
+  switch (event.key) {
+    case 'd':
+      player.velocity.x = 0
+      break
+    case 'a':
+      player.velocity.x = 0
+      break
+  }
+
+})
+
+animate()
