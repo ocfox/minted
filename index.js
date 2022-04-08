@@ -6,7 +6,7 @@ canvas.height = 576
 
 context.fillRect(0, 0, canvas.width, canvas.height)
 
-const gravity = 0.6
+const gravity = 2
 
 class Sprite {
   constructor({ position, velocity }) {
@@ -84,15 +84,15 @@ function animate() {
   enemy.velocity.x = 0
 
   if (keys.a.pressed && player.lastKey === 'a') {
-    player.velocity.x = -1
+    player.velocity.x = -5
   } else if (keys.d.pressed && player.lastKey === 'd') {
-    player.velocity.x = 1
+    player.velocity.x = 5
   }
 
   if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
-    enemy.velocity.x = -1
+    enemy.velocity.x = -5
   } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
-    enemy.velocity.x = 1
+    enemy.velocity.x = 5
   }
 }
 
@@ -118,12 +118,12 @@ window.addEventListener('keydown', (event) => {
       break
     case 'w':
       if (player.velocity.y === 0) {
-        player.velocity.y = -10
+        player.velocity.y = -30
       }
       break
     case 'ArrowUp':
       if (enemy.velocity.y === 0) {
-        enemy.velocity.y = -10
+        enemy.velocity.y = -30
       }
       break
   }
