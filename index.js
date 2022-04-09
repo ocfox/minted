@@ -21,6 +21,7 @@ class Sprite {
       height: 50,
     }
     this.color = color
+    this.isAttacking = false
   }
 
   draw() {
@@ -28,7 +29,7 @@ class Sprite {
     context.fillRect(this.position.x, this.position.y, this.width, this.height)
 
     context.fillStyle = 'green'
-    context.fillRect(this.position.x, this.position.y, this.attackBox.width, this.attackBox.height)
+    context.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height)
   }
 
   update() {
@@ -103,6 +104,13 @@ function animate() {
     enemy.velocity.x = -5
   } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
     enemy.velocity.x = 5
+  }
+
+  if (player.attackBox.position.x + player.attackBox.width >= enemy.position.x &&
+    player.attackBox.position.y + player.attackBox.height >= enemy.position.y &&
+    enemy.position.x + enemy.width >= player.attackBox.position.x &&
+    enemy.position.y + enemy.height >= player.attackBox.position.y) {
+    console.log('-hp (for test)')
   }
 }
 
