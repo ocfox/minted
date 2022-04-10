@@ -28,11 +28,14 @@ class Sprite {
     context.fillStyle = this.color
     context.fillRect(this.position.x, this.position.y, this.width, this.height)
 
-    context.fillStyle = 'green'
-    context.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height)
+    if (this.isAttacking) {
+      context.fillStyle = 'green'
+      context.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height)
+    }
   }
 
   update() {
+    this.draw()
     if (this.position.y + this.height + this.velocity.y >= canvas.height) {
       this.velocity.y = 0
     } else {
@@ -40,9 +43,17 @@ class Sprite {
     }
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
-    this.draw()
   }
+
+  attack() {
+    this.isAttacking = true
+    setTimeout(() => {
+      this.isAttacking = false
+    }, 100)
+  }
+
 }
+
 
 const player = new Sprite({
   position: {
@@ -109,7 +120,9 @@ function animate() {
   if (player.attackBox.position.x + player.attackBox.width >= enemy.position.x &&
     player.attackBox.position.y + player.attackBox.height >= enemy.position.y &&
     enemy.position.x + enemy.width >= player.attackBox.position.x &&
-    enemy.position.y + enemy.height >= player.attackBox.position.y) {
+    enemy.position.y + enemy.height >= player.attackBox.position.y &&
+    player.isAttacking) {
+    player.isAttacking = false
     console.log('-hp (for test)')
   }
 }
@@ -126,6 +139,14 @@ window.addEventListener('keydown', (event) => {
       keys.a.pressed = true
       player.lastKey = 'a'
       break
+    case 'w':
+      if (player.velocity.y === 0) {
+        player.velocity.y = -30
+      }
+      break
+    case 'j':
+      player.attack()
+      break
     case 'ArrowRight':
       keys.ArrowRight.pressed = true
       enemy.lastKey = 'ArrowRight'
@@ -133,11 +154,6 @@ window.addEventListener('keydown', (event) => {
     case 'ArrowLeft':
       keys.ArrowLeft.pressed = true
       enemy.lastKey = 'ArrowLeft'
-      break
-    case 'w':
-      if (player.velocity.y === 0) {
-        player.velocity.y = -30
-      }
       break
     case 'ArrowUp':
       if (enemy.velocity.y === 0) {
