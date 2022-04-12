@@ -9,16 +9,20 @@ context.fillRect(0, 0, canvas.width, canvas.height)
 const gravity = 2
 
 class Sprite {
-  constructor({ position, velocity, color = 'red' }) {
+  constructor({ position, velocity, color = 'red', offset }) {
     this.position = position
     this.velocity = velocity
     this.height = 150
     this.width = 50
     this.lastKey
     this.attackBox = {
-      position: this.position,
+      position: {
+        x: this.position.x,
+        y: this.position.y
+      },
+      offset,
       width: 100,
-      height: 50,
+      height: 50
     }
     this.color = color
     this.isAttacking = false
@@ -36,6 +40,8 @@ class Sprite {
 
   update() {
     this.draw()
+    this.attackBox.position.x = this.position.x + this.attackBox.offset.x
+    this.attackBox.position.y = this.position.y
     if (this.position.y + this.height + this.velocity.y >= canvas.height) {
       this.velocity.y = 0
     } else {
@@ -63,6 +69,10 @@ const player = new Sprite({
   velocity: {
     x: 0,
     y: 0
+  },
+  offset: {
+    x: 0,
+    y: 0
   }
 })
 
@@ -74,6 +84,10 @@ const enemy = new Sprite({
   velocity: {
     x: 0,
     y: 10
+  },
+  offset: {
+    x: -50,
+    y: 0
   },
   color: 'blue'
 })
@@ -93,7 +107,14 @@ const keys = {
   }
 }
 
-let lastKey
+function rectangularCollision({ rec1, rec2 }) {
+  return (
+    rec1.attackBox.position.x + rec1.attackBox.width >= rec2.position.x &&
+    rec1.attackBox.position.y + rec1.attackBox.height >= rec2.position.y &&
+    rec2.position.x + rec2.width >= rec1.attackBox.position.x &&
+    rec2.position.y + rec2.height >= rec1.attackBox.position.y
+  )
+}
 
 function animate() {
   window.requestAnimationFrame(animate)
@@ -117,10 +138,19 @@ function animate() {
     enemy.velocity.x = 5
   }
 
-  if (player.attackBox.position.x + player.attackBox.width >= enemy.position.x &&
-    player.attackBox.position.y + player.attackBox.height >= enemy.position.y &&
-    enemy.position.x + enemy.width >= player.attackBox.position.x &&
-    enemy.position.y + enemy.height >= player.attackBox.position.y &&
+  if (rectangularCollision({
+    rec1: player,
+    rec2: enemy
+  }) &&
+    player.isAttacking) {
+    player.isAttacking = false
+    console.log('-hp (for test)')
+  }
+
+  if (rectangularCollision({
+    rec1: enemy,
+    rec2: player
+  }) &&
     player.isAttacking) {
     player.isAttacking = false
     console.log('-hp (for test)')
