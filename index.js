@@ -144,16 +144,16 @@ function animate() {
   }) &&
     player.isAttacking) {
     player.isAttacking = false
-    console.log('-hp (for test)')
+    console.log(' enemy -hp (for test)')
   }
 
   if (rectangularCollision({
     rec1: enemy,
     rec2: player
   }) &&
-    player.isAttacking) {
-    player.isAttacking = false
-    console.log('-hp (for test)')
+    enemy.isAttacking) {
+    enemy.isAttacking = false
+    console.log('player -hp (for test)')
   }
 }
 
@@ -176,6 +176,9 @@ window.addEventListener('keydown', (event) => {
       break
     case 'j':
       player.attack()
+      break
+    case 'ArrowDown':
+      enemy.attack()
       break
     case 'ArrowRight':
       keys.ArrowRight.pressed = true
