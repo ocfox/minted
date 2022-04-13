@@ -170,7 +170,7 @@ window.addEventListener('keydown', (event) => {
       player.lastKey = 'a'
       break
     case 'w':
-      if (player.velocity.y === 0) {
+      if (player.position.y + player.height === canvas.height) {
         player.velocity.y = -30
       }
       break
@@ -189,7 +189,7 @@ window.addEventListener('keydown', (event) => {
       enemy.lastKey = 'ArrowLeft'
       break
     case 'ArrowUp':
-      if (enemy.velocity.y === 0) {
+      if (enemy.position.y + enemy.height === canvas.height) {
         enemy.velocity.y = -30
       }
       break
