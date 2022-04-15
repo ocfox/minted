@@ -15,6 +15,7 @@ class Sprite {
     this.height = 150
     this.width = 50
     this.lastKey
+    this.health = 100
     this.attackBox = {
       position: {
         x: this.position.x,
@@ -34,7 +35,12 @@ class Sprite {
 
     if (this.isAttacking) {
       context.fillStyle = 'green'
-      context.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height)
+      context.fillRect(
+        this.attackBox.position.x,
+        this.attackBox.position.y,
+        this.attackBox.width,
+        this.attackBox.height
+      )
     }
   }
 
@@ -59,7 +65,6 @@ class Sprite {
   }
 
 }
-
 
 const player = new Sprite({
   position: {
@@ -142,22 +147,36 @@ function animate() {
     rec1: player,
     rec2: enemy
   }) &&
-    player.isAttacking) {
+    player.isAttacking
+  ) {
     player.isAttacking = false
-    console.log(' enemy -hp (for test)')
+    enemy.health -= 5
+    document.querySelector('#enemyHealth').style.width = enemy.health + '%'
   }
 
   if (rectangularCollision({
     rec1: enemy,
     rec2: player
   }) &&
-    enemy.isAttacking) {
+    enemy.isAttacking
+  ) {
     enemy.isAttacking = false
-    console.log('player -hp (for test)')
+    player.health -= 5
+    document.querySelector('#playerHealth').style.width = player.health + '%'
   }
 }
 
 animate()
+
+let timer = 61
+function decreaseTimer() {
+  setTimeout(decreaseTimer, 1000)
+  if (timer > 0) {
+    timer -= 1
+    document.querySelector('#timer').innerHTML = timer
+  }
+}
+decreaseTimer()
 
 window.addEventListener('keydown', (event) => {
   switch (event.key) {
