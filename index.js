@@ -175,6 +175,17 @@ function decreaseTimer() {
     timer -= 1
     document.querySelector('#timer').innerHTML = timer
   }
+
+  if (timer === 0) {
+    document.querySelector('#result').style.display = 'flex'
+    if (player.health === enemy.health) {
+      document.querySelector('#result').innerHTML = 'Tie'
+    } else if (player.health > enemy.health) {
+      document.querySelector('#result').innerHTML = 'Player Win'
+    } else {
+      document.querySelector('#result').innerHTML = 'Enemy Win'
+    }
+  }
 }
 decreaseTimer()
 
