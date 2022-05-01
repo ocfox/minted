@@ -8,65 +8,15 @@ context.fillRect(0, 0, canvas.width, canvas.height)
 
 const gravity = 2
 
-class Sprite {
-  constructor({ position, velocity, color = 'red', offset }) {
-    this.position = position
-    this.velocity = velocity
-    this.height = 150
-    this.width = 50
-    this.lastKey
-    this.health = 100
-    this.attackBox = {
-      position: {
-        x: this.position.x,
-        y: this.position.y
-      },
-      offset,
-      width: 100,
-      height: 50
-    }
-    this.color = color
-    this.isAttacking = false
-  }
+const background = new Sprite({
+  position: {
+    x: 0,
+    y: 0
+  },
+  imageSrc: './img/Island/output.png'
+})
 
-  draw() {
-    context.fillStyle = this.color
-    context.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-    if (this.isAttacking) {
-      context.fillStyle = 'green'
-      context.fillRect(
-        this.attackBox.position.x,
-        this.attackBox.position.y,
-        this.attackBox.width,
-        this.attackBox.height
-      )
-    }
-  }
-
-  update() {
-    this.draw()
-    this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-    this.attackBox.position.y = this.position.y
-    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
-      this.velocity.y = 0
-    } else {
-      this.velocity.y += gravity
-    }
-    this.position.x += this.velocity.x
-    this.position.y += this.velocity.y
-  }
-
-  attack() {
-    this.isAttacking = true
-    setTimeout(() => {
-      this.isAttacking = false
-    }, 100)
-  }
-
-}
-
-const player = new Sprite({
+const player = new Fighter({
   position: {
     x: 300,
     y: 0
@@ -81,10 +31,10 @@ const player = new Sprite({
   }
 })
 
-const enemy = new Sprite({
+const enemy = new Fighter({
   position: {
     x: 700,
-    y: 400
+    y: 0
   },
   velocity: {
     x: 0,
@@ -112,19 +62,12 @@ const keys = {
   }
 }
 
-function rectangularCollision({ rec1, rec2 }) {
-  return (
-    rec1.attackBox.position.x + rec1.attackBox.width >= rec2.position.x &&
-    rec1.attackBox.position.y + rec1.attackBox.height >= rec2.position.y &&
-    rec2.position.x + rec2.width >= rec1.attackBox.position.x &&
-    rec2.position.y + rec2.height >= rec1.attackBox.position.y
-  )
-}
-
 function animate() {
   window.requestAnimationFrame(animate)
   context.fillStyle = 'black'
   context.fillRect(0, 0, canvas.width, canvas.height)
+
+  background.update()
   player.update()
   enemy.update()
 
@@ -164,27 +107,25 @@ function animate() {
     player.health -= 5
     document.querySelector('#playerHealth').style.width = player.health + '%'
   }
+
+  if (enemy.health <= 0 || player.health <= 0) {
+    determineWinner({ player, enemy, timerId })
+  }
 }
 
 animate()
 
 let timer = 61
+let timerId
 function decreaseTimer() {
-  setTimeout(decreaseTimer, 1000)
   if (timer > 0) {
+    timerId = setTimeout(decreaseTimer, 1000)
     timer -= 1
     document.querySelector('#timer').innerHTML = timer
   }
 
   if (timer === 0) {
-    document.querySelector('#result').style.display = 'flex'
-    if (player.health === enemy.health) {
-      document.querySelector('#result').innerHTML = 'Tie'
-    } else if (player.health > enemy.health) {
-      document.querySelector('#result').innerHTML = 'Player Win'
-    } else {
-      document.querySelector('#result').innerHTML = 'Enemy Win'
-    }
+    determineWinner({ player, enemy, timerId })
   }
 }
 decreaseTimer()
@@ -200,7 +141,7 @@ window.addEventListener('keydown', (event) => {
       player.lastKey = 'a'
       break
     case 'w':
-      if (player.position.y + player.height === canvas.height) {
+      if (player.position.y + player.height === canvas.height - 70) {
         player.velocity.y = -30
       }
       break
@@ -219,7 +160,7 @@ window.addEventListener('keydown', (event) => {
       enemy.lastKey = 'ArrowLeft'
       break
     case 'ArrowUp':
-      if (enemy.position.y + enemy.height === canvas.height) {
+      if (enemy.position.y + enemy.height === canvas.height - 70) {
         enemy.velocity.y = -30
       }
       break
